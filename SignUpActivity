@@ -1,0 +1,72 @@
+package com.cicciopasticcio.chiappette;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.DatePicker;
+import android.app.Dialog;
+import android.app.DatePickerDialog;
+import android.support.v4.app.DialogFragment;
+
+import java.util.Calendar;
+
+public class SignUpActivity extends AppCompatActivity {
+    private EditText nameField, nascitaField, usernameField, passwordField, mailField;
+    private TextView role;
+    EditText mEdit;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_up);
+
+        nameField = (EditText) findViewById(R.id.editText3);
+        nascitaField = (EditText) findViewById(R.id.editText);
+        usernameField = (EditText) findViewById(R.id.editText4);
+        passwordField = (EditText) findViewById(R.id.editText5);
+        mailField = (EditText) findViewById(R.id.editText6);
+        role = (TextView)findViewById(R.id.textView14);
+
+    }
+    public void selectDate(View view) {
+        DialogFragment newFragment = new SelectDateFragment();
+        newFragment.show(getSupportFragmentManager(), "DatePicker");
+    }
+    public void populateSetDate(int year, int month, int day) {
+        mEdit = (EditText)findViewById(R.id.editText);
+        mEdit.setText(year+"-"+month+"-"+day);
+    }
+    public class SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar calendar = Calendar.getInstance();
+            int yy = calendar.get(Calendar.YEAR);
+            int mm = calendar.get(Calendar.MONTH);
+            int dd = calendar.get(Calendar.DAY_OF_MONTH);
+            return new DatePickerDialog(getActivity(), this, yy, mm, dd);
+        }
+
+        public void onDateSet(DatePicker view, int yy, int mm, int dd) {
+            populateSetDate(yy, mm+1, dd);
+        }
+    }
+    public void registrati(View view) {
+        String name = nameField.getText().toString();
+        String nascita = nascitaField.getText().toString();
+        String username = usernameField.getText().toString();
+        String password = passwordField.getText().toString();
+        String mail = mailField.getText().toString();
+
+
+        new RegisterActivity(this, role).execute(name, nascita, username, password, mail);
+    }
+
+    public void backMain(View view){
+        Intent intent = new Intent(getApplicationContext(), ConActivity.class);
+        startActivity(intent);
+    }
+}
